@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:weightSum="10"
+    android:orientation="vertical"
+    tools:context="edu.purdue.qingdong.imagetest.MainActivity">
+
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent"
+        android:id="@+id/imageView"
+        android:layout_weight="7"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:layout_above="@+id/rgbValue" />
+    <Button
+        android:id="@+id/btnCamera"
+        android:layout_weight="1"
+        android:text="Open Camera"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true" />
+    <Button
+        android:id="@+id/btnSave"
+        android:layout_weight="1"
+        android:text="Save"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true" />
+    <TextView
+        android:id="@+id/rgbValue"
+        android:layout_weight="1"
+        android:text="Red:   Green:   Blue:"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_above="@+id/btnCamera"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:id="@+id/oacView"
+        android:layout_weight="1"
+        android:text="oac000"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_above="@+id/btnSave"
+        android:layout_alignParentEnd="true" />
+
+</RelativeLayout>
