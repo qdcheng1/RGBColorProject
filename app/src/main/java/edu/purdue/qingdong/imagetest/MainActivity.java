@@ -231,7 +231,7 @@ public class MainActivity extends AppCompatActivity {
         if(requestCode == 0) {
             CropImage();
         }
-        else if (requestCode == 1) {
+        else if (requestCode == 1 && resultCode == RESULT_OK) {
             if(data != null) {
                 Bundle bundle = data.getExtras();
                 Bitmap bitmap = bundle.getParcelable("data");
