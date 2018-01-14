@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -35,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
 
     File file;
     Uri uri;
-    Intent CamIntent,GalIntent,CropIntent;
+    Intent CamIntent,CropIntent;
     final int RequestPermissionCode=1;
     DisplayMetrics displayMetrics;
 
@@ -68,7 +67,8 @@ public class MainActivity extends AppCompatActivity {
         convertRgbToLab(labs);
         convertRgbToHsv(hsvs);
 
-
+        //write to lab color to labfile
+        // writeLAB();
 
         imageView = (ImageView)findViewById(R.id.imageView);
         rgbTextView = (TextView) findViewById(R.id.rgbValue);
@@ -89,9 +89,12 @@ public class MainActivity extends AppCompatActivity {
                 startActivityForResult(CamIntent,0);
             }
         });
-
     }
 
+    public void onColorimetric(View v) {
+        Intent intent = new Intent(this, CropActivity.class);
+        startActivity(intent);
+    }
 
     public void saveTestValue(String value){
         // for test purpose, write the string into the test.csv file
@@ -111,14 +114,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-//    @Override
-//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        super.onActivityResult(requestCode, resultCode, data);
-//        Bitmap bitmap = (Bitmap) data.getExtras().get("data");
-//        imageView.setImageBitmap(bitmap);
-//    }
-
-
     private void readData(int[][]rgbs){
         InputStream is = getResources().openRawResource(R.raw.rgbvalues);
         BufferedReader reader = new BufferedReader(
@@ -134,38 +129,41 @@ public class MainActivity extends AppCompatActivity {
                 rgbs[index][1] = Integer.parseInt(tokens[2]);
                 rgbs[index][2] = Integer.parseInt(tokens[3]);
                 index++;
-
             }
         } catch (IOException e1) {
             Log.e("MainActivity", "Error" + line, e1);
             e1.printStackTrace();
         }
-
     }
 
     private int colorMatchRGB(int[][]RGBcolors, int[] croppedValues) {
         int ans = 1;
-        int red = croppedValues[0];
-        int green = croppedValues[1];
-        int blue = croppedValues[2];
-        int min = (red - RGBcolors[0][0]) * (red - RGBcolors[0][0]) + (green - RGBcolors[0][1]) * (green - RGBcolors[0][1]) +(blue - RGBcolors[0][2]) * (blue - RGBcolors[0][2]);
-        for (int i = 1; i < RGBcolors.length; i++) {
+        int red = croppedValues[0] + 59;
+        int green = croppedValues[1] + 52;
+        int blue = croppedValues[2] + 43;
+
+        red = (red > 255) ? 255 : red;
+        green = (green > 255) ? 255 : green;
+        blue = (blue > 255) ? 255 : blue;
+        double min = Double.MAX_VALUE;
+        for (int i = 0; i < RGBcolors.length; i++) {
             int ri = RGBcolors[i][0];
             int gi = RGBcolors[i][1];
             int bi = RGBcolors[i][2];
-            int diff = (red - ri) * (red - ri) + (green - gi) * (green - gi) +(blue - bi) * (blue - bi) ;
+            double diff = (red - ri) * (red - ri) + (green - gi) * (green - gi) + (blue - bi) * (blue - bi) ;
             if (diff < min) {
                 min = diff;
                 ans = i + 1;
             }
         }
+        Log.i("Min RGB", "" + min );
         return ans;
     }
 
     private int colorMatchHSV(float[][] hsvColors, float[] hsv) {
         int ans = 1;
-        double min = distanceOf(hsvColors[0], hsv);
-        for (int i = 1; i < hsvColors.length; i++) {
+        double min = Double.MAX_VALUE;
+        for (int i = 0; i < hsvColors.length; i++) {
             double diff = distanceOf(hsvColors[i], hsv);
             if (diff < min) {
                 min = diff;
@@ -173,6 +171,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
+        Log.i("Min HSV", "" + min );
         return ans;
     }
     private int colorMatchLab(double[][]labColors, double[] croppedValues) {
@@ -180,8 +179,9 @@ public class MainActivity extends AppCompatActivity {
         double l = croppedValues[0];
         double a = croppedValues[1];
         double b = croppedValues[2];
-        double min = (l - labColors[0][0]) * (l - labColors[0][0]) + (a - labColors[0][1]) * (a - labColors[0][1]) +(b - labColors[0][2]) * (b - labColors[0][2]);
-        for (int i = 1; i < labColors.length; i++) {
+        double min = Double.MAX_VALUE;
+
+        for (int i = 0; i < labColors.length; i++) {
             double li = labColors[i][0] ;
             double ai = labColors[i][1];
             double bi = labColors[i][2];
@@ -191,6 +191,7 @@ public class MainActivity extends AppCompatActivity {
                 ans = i + 1;
             }
         }
+        Log.i("Min LAB", "" + min);
         return ans;
     }
 
@@ -272,11 +273,8 @@ public class MainActivity extends AppCompatActivity {
                 SaveImage(bitmap);
                 int[] rgb = new int[3];
                 getRGB(bitmap, rgb);
-
                 showRGB(rgb);
-
                 //colorDiffTest(rgb);
-
                 //test the lab color
                 float[] croppedHsv = new float[3];
                 Color.RGBToHSV(rgb[0],rgb[1],rgb[2],croppedHsv);
@@ -287,23 +285,6 @@ public class MainActivity extends AppCompatActivity {
                 imageView.setImageBitmap(bitmap);
             }
         }
-//        else if(requestCode == 2)
-//        {
-//            if(data != null)
-//            {
-//                uri = data.getData();
-//                CropImage();
-//            }
-//        }
-//        else if (requestCode == 1)
-//        {
-//            if(data != null)
-//            {
-//                Bundle bundle = data.getExtras();
-//                Bitmap bitmap = bundle.getParcelable("data");
-//                imageView.setImageBitmap(bitmap);
-//            }
-//        }
     }
 
 
@@ -323,14 +304,6 @@ public class MainActivity extends AppCompatActivity {
                 bSum += Color.blue(color);
             }
         }
-//        for (int i = 0; i < w; i++) {
-//            for (int j = 0; j < h; j++) {
-//                int pix = b.getPixel(i, j);
-//                rSum += (pix >> 16) & 0xff;     //bitwise shifting
-//                gSum += (pix >> 8) & 0xff;
-//                bSum += pix & 0xff;
-//            }
-//        }
         rgb[0] = rSum / pixSum;
         rgb[1] = gSum / pixSum;
         rgb[2] = bSum / pixSum;
@@ -362,11 +335,9 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-
     public double[] rgbToLab(int R, int G, int B) {
         //convert rgb to lab
         //return a double array
-
         double r, g, b, X, Y, Z, xr, yr, zr;
         // D65/2°
         double Xr = 95.047;
@@ -454,7 +425,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-
     private void SaveImage(Bitmap finalBitmap) {
 
         String root = Environment.getExternalStorageDirectory().toString();
@@ -504,7 +474,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void writeHsv() {
-
+        // test method, write hsv to sdcard
         try
         {
             File root = Environment.getExternalStorageDirectory();
@@ -528,18 +498,28 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-//    @Override
-//    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-//        switch (requestCode)
-//        {
-//            case RequestPermissionCode:
-//            {
-//                if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
-//                    Toast.makeText(this,"Permission Granted",Toast.LENGTH_SHORT).show();
-//                else
-//                    Toast.makeText(this,"Permission Canceled",Toast.LENGTH_SHORT).show();
-//            }
-//            break;
-//        }
-//    }
+    public void writeLAB() {
+
+        try
+        {
+            File root = Environment.getExternalStorageDirectory();
+            File gpxfile = new File(root, "Lab.csv");
+            FileWriter writer = new FileWriter(gpxfile, true);
+            String labStr = "";
+
+            for (int i = 0; i < labs.length; i++) {
+                labStr = labStr + labs[i][0] + "," + labs[i][1] + "," + labs[i][2] + "\n";
+            }
+
+            writer.append(labStr);
+            //generate whatever data you want
+            writer.flush();
+            writer.close();
+        }
+        catch(IOException e)
+        {
+            e.printStackTrace();
+        }
+    }
+
 }

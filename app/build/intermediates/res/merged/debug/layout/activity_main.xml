@@ -65,9 +65,10 @@
         style="?android:attr/buttonStyleSmall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Save Test"
+        android:text="colorimetric"
         android:id="@+id/button"
         android:layout_below="@+id/rgbValue"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:onClick="onColorimetric" />
 
 </RelativeLayout>

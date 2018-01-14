@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="edu.purdue.qingdong.imagetest.ColorimetricActivity">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#a0eee2"
+        android:id="@+id/imageViewColor"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="process"
+        android:onClick="onProcess"
+        android:id="@+id/process"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="R:"
+        android:id="@+id/red"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="G:"
+        android:id="@+id/green"
+        android:layout_below="@+id/red"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="B:"
+        android:id="@+id/blue"
+        android:layout_below="@+id/green"
+        android:layout_alignParentStart="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Camera"
+        android:id="@+id/camera"
+        android:onClick="onCamera"
+        android:layout_alignParentBottom="true"
+        android:layout_alignStart="@+id/imageViewColor" />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="ref"
+        android:id="@+id/cropRef"
+        android:layout_alignParentBottom="true"
+        android:layout_toEndOf="@+id/camera"
+        android:onClick="onReferenceCrop"
+        android:nestedScrollingEnabled="false" />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Interest"
+        android:id="@+id/cropInterest"
+        android:layout_alignTop="@+id/process"
+        android:layout_toStartOf="@+id/process"
+        android:onClick="onInterestCrop" />
+</RelativeLayout>
